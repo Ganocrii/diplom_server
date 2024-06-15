@@ -33,7 +33,6 @@ module.exports = (db) => {
       const products = [...softwareProducts, ...hardwareProducts];
 
       console.log('Products:', products);
-      //console.log('Sending response:', JSON.stringify(products));
       res.json(products);
     } catch (err) {
       console.error('Error fetching products:', err);
