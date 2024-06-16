@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use('/api/products', productRoutes);
 
 // Строка подключения к MongoDB
-const mongoURI = `${process.env.MONGODB_URI}?retryWrites=true&w=majority&connectTimeoutMS=10000&socketTimeoutMS=45000`;
+const mongoURI = process.env.MONGODB_URI + '?retryWrites=true&w=majority&connectTimeoutMS=10000&socketTimeoutMS=45000';
 
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,
