@@ -38,6 +38,7 @@ async function connectDB() {
     app.use('/api/products', require('./routes/products')(db));
   } catch (err) {
     console.error('Error connecting to MongoDB:', err.message);
+    setTimeout(connectDB, 5000);  // Попробовать снова подключиться через 5 секунд
   }
 }
 

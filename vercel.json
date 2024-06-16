@@ -1,21 +1,12 @@
 {
     "version": 2,
     "builds": [
-      {
-        "src": "server.js",
-        "use": "@vercel/node"
-      }
+      { "src": "server.js", "use": "@vercel/node" }
     ],
     "routes": [
-      {
-        "src": "/api/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/(.*)",
-        "status": 404,
-        "dest": "server.js"
-      }
-    ]
+      { "src": "/(.*)", "dest": "/" }
+    ],
+    "env": {
+      "MONGODB_URI": "@mongodb_uri"
+    }
   }
-  
