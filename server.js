@@ -9,12 +9,10 @@ const PORT = process.env.PORT || 3001;
 app.use(bodyParser.json());
 
 // Connect to MongoDB
-let db;
 connectMongoDB()
-  .then(database => {
-    db = database;
+  .then(db => {
     console.log('Connected to MongoDB successfully');
-
+    
     // Routes
     const productsRouter = require('./routes/products')(db);
     app.use('/api/products', productsRouter);
