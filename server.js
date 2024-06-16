@@ -1,35 +1,52 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const productRoutes = require('./routes/products');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use('/api/products', productRoutes);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Строка подключения к MongoDB
-const mongoURI = process.env.MONGODB_URI + '?retryWrites=true&w=majority&connectTimeoutMS=10000&socketTimeoutMS=45000';
+const uri = process.env.MONGODB_URI;
 
-mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => {
-    console.log('Connected successfully to MongoDB');
-})
-.catch((error) => {
-    console.error('Error connecting to MongoDB:', error.message);
+if (!uri) {
+  console.error('Error: MONGODB_URI is not defined in .env file');
+  process.exit(1);
+}
+
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
 
+let db;
+
+async function connectDB() {
+  try {
+    await client.connect();
+    console.log("Connected successfully to MongoDB");
+    db = client.db('projectdb');
+    app.use('/api/products', require('./routes/products')(db));
+  } catch (err) {
+    console.error('Error connecting to MongoDB:', err.message);
+  }
+}
+
+connectDB().catch(console.dir);
+
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+  res.send('Hello World!');
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
