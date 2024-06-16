@@ -26,6 +26,9 @@ module.exports = (db) => {
       const softwareProducts = await Product.find(softwareQuery).toArray();
       const hardwareProducts = await Product.find(hardwareQuery).toArray();
 
+      console.log('Software Products:', softwareProducts);
+      console.log('Hardware Products:', hardwareProducts);
+
       const products = [...softwareProducts, ...hardwareProducts];
       console.log('Products:', products);
       res.json(products);

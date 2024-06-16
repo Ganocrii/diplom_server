@@ -11,7 +11,8 @@ const connectMongoDB = async () => {
 
   try {
     await client.connect();
-    return client.db(); // Возвращаем экземпляр базы данных
+    console.log('Connected to MongoDB');
+    return client.db();
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
     throw error;
