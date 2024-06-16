@@ -1,37 +1,35 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const productsRoute = require('./routes/products');
-const dotenv = require('dotenv');
-
-dotenv.config();
+const bodyParser = require('body-parser');
+const connectMongoDB = require('./connectMongoDB');
 
 const app = express();
-
 const PORT = process.env.PORT || 3001;
-const MONGODB_URI = process.env.MONGODB_URI;
 
-app.use(cors());
-app.use(express.json());
+// Middleware
+app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
-
-app.use('/api/products', productsRoute);
-
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => {
+// Connect to MongoDB
+let db;
+connectMongoDB()
+  .then(database => {
+    db = database;
     console.log('Connected to MongoDB successfully');
+
+    // Routes
+    const productsRouter = require('./routes/products')(db);
+    app.use('/api/products', productsRouter);
+
+    // Start server
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err.message);
+  .catch(error => {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
   });
 
-module.exports = app;
+// Root endpoint
+app.get('/', (req, res) => {
+  res.send('Hello, world!');
+});
